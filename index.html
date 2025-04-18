@@ -2,46 +2,96 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Добро пожаловать!</title>
+  <title>Фит-калькулятор</title>
   <style>
     body {
-      background: linear-gradient(to right, #667eea, #764ba2);
-      color: white;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding-top: 100px;
+      font-family: Arial;
+      max-width: 500px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #f0f8ff;
+      border-radius: 10px;
     }
     h1 {
-      font-size: 48px;
+      text-align: center;
+      color: #333;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
       margin-bottom: 10px;
     }
-    p {
-      font-size: 20px;
-      margin-bottom: 30px;
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
     }
-    img {
-      width: 200px;
-      border-radius: 15px;
-      margin-bottom: 20px;
-    }
-    a.button {
-      background-color: white;
-      color: #764ba2;
-      padding: 12px 24px;
-      border-radius: 25px;
-      text-decoration: none;
+    #result {
+      margin-top: 20px;
       font-weight: bold;
-      transition: 0.3s;
-    }
-    a.button:hover {
-      background-color: #f0f0f0;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <img src="https://via.placeholder.com/200" alt="Фото или логотип">
-  <h1>Добро пожаловать на мой сайт!</h1>
-  <p>Этот сайт размещён с помощью GitHub Pages.</p>
-  <a class="button" href="mailto:youremail@example.com">Связаться со мной</a>
+  <h1>Фит-калькулятор</h1>
+
+  <label>Возраст:</label>
+  <input type="number" id="age">
+
+  <label>Вес (кг):</label>
+  <input type="number" id="weight">
+
+  <label>Рост (см):</label>
+  <input type="number" id="height">
+
+  <label>Пол:</label>
+  <select id="gender">
+    <option value="male">Мужской</option>
+    <option value="female">Женский</option>
+  </select>
+
+  <label>Активность:</label>
+  <select id="activity">
+    <option value="1.2">Минимальная</option>
+    <option value="1.375">Лёгкая</option>
+    <option value="1.55">Средняя</option>
+    <option value="1.725">Высокая</option>
+    <option value="1.9">Очень высокая</option>
+  </select>
+
+  <button onclick="calculateCalories()">Рассчитать калории</button>
+
+  <div id="result"></div>
+
+  <script>
+    function calculateCalories() {
+      const age = parseInt(document.getElementById('age').value);
+      const weight = parseFloat(document.getElementById('weight').value);
+      const height = parseFloat(document.getElementById('height').value);
+      const gender = document.getElementById('gender').value;
+      const activity = parseFloat(document.getElementById('activity').value);
+
+      let bmr;
+
+      if (gender === 'male') {
+        bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+      } else {
+        bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+      }
+
+      const total = Math.round(bmr * activity);
+
+      document.getElementById('result').innerHTML = `Ваша суточная норма калорий: ${total} ккал`;
+    }
+  </script>
 </body>
 </html>
