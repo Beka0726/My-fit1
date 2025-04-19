@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MyFit Ultimate</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="logo32.png" type="image/png" />
+
   <!-- PWA -->
-  <meta name="theme-color" content="#007AFF">
-  <link rel="manifest" href="manifest.json">
-  <!-- Firebase для синхронизации и авторизации -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
-  <!-- Графики -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#007AFF" />
+
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Ленивая загрузка видео -->
-  <script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js"></script>
+
   <style>
     :root {
       --primary: #007AFF;
@@ -51,15 +51,9 @@
       max-width: 600px;
       margin: 0 auto;
     }
-    .logo {
-      width: 120px;
-      display: block;
-      margin: 0 auto 20px;
-    }
     h1, h2, h3 {
       color: var(--primary);
       margin-bottom: 15px;
-      text-align: center;
     }
     section {
       background: var(--card);
@@ -68,268 +62,254 @@
       margin-bottom: 20px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
-    /* ... (остальные стили остаются без изменений) ... */
-    .auth-section {
-      text-align: center;
+    label {
+      display: block;
+      margin: 12px 0 6px;
+      font-weight: 500;
     }
-    .exercise iframe {
+    input, select {
       width: 100%;
-      height: 200px;
+      padding: 12px;
+      margin-bottom: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--card);
+      color: var(--text);
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      background: var(--primary);
+      color: white;
       border: none;
       border-radius: 8px;
-      background: var(--border);
-    }
-    .exercise-placeholder {
-      width: 100%;
-      height: 200px;
-      background: var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 8px;
+      font-size: 16px;
       cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 10px;
+    }
+    button:active {
+      transform: scale(0.98);
+    }
+    .exercise, .meal {
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      background: var(--bg);
+      border-radius: 8px;
+      border-left: 4px solid var(--primary);
+    }
+    .chart-container {
+      margin: 20px 0;
+      height: 250px;
+    }
+    progress {
+      width: 100%;
+      height: 10px;
+      border-radius: 5px;
+      margin: 10px 0;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in {
+      animation: fadeIn 0.3s ease-out;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Логотип и заголовок -->
-    <img src="logo.png" alt="MyFit Logo" class="logo">
     <h1>MyFit Ultimate</h1>
 
-    <!-- Секция авторизации -->
-    <section class="auth-section fade-in" id="auth-section">
-      <div id="auth-container">
-        <button id="google-auth" onclick="signInWithGoogle()">Войти через Google</button>
-        <button id="logout-btn" style="display:none;" onclick="signOut()">Выйти</button>
-      </div>
-      <div id="user-info" style="display:none; margin-top:15px;">
-        <img id="user-photo" width="50" style="border-radius:50%;">
-        <span id="user-name"></span>
-      </div>
-    </section>
-
-    <!-- Калькулятор калорий (остается без изменений) -->
+    <!-- Калькулятор калорий -->
     <section class="fade-in">
-      <!-- ... существующий код калькулятора ... -->
+      <h2>Калькулятор калорий</h2>
+      <label>Возраст:</label>
+      <input type="number" id="age" placeholder="25" />
+      <label>Вес (кг):</label>
+      <input type="number" id="weight" placeholder="70" />
+      <label>Рост (см):</label>
+      <input type="number" id="height" placeholder="175" />
+      <label>Пол:</label>
+      <select id="gender">
+        <option value="male">Мужской</option>
+        <option value="female">Женский</option>
+      </select>
+      <label>Активность:</label>
+      <select id="activity">
+        <option value="1.2">Минимальная</option>
+        <option value="1.375">Легкая</option>
+        <option value="1.55" selected>Средняя</option>
+        <option value="1.725">Высокая</option>
+      </select>
+      <button onclick="calculateCalories()">Рассчитать</button>
+      <div id="result"></div>
     </section>
 
-    <!-- Трекер воды (остается без изменений) -->
+    <!-- Трекер воды -->
     <section class="fade-in">
-      <!-- ... существующий код трекера воды ... -->
+      <h2>Трекер воды</h2>
+      <label>Выпито сегодня (мл):</label>
+      <input type="number" id="water" value="250" />
+      <button onclick="addWater()">Добавить</button>
+      <progress id="water-progress" value="0" max="2000"></progress>
+      <div>Всего: <span id="water-total">0</span> мл / 2000 мл</div>
+      <label>Напоминать каждые:</label>
+      <select id="reminder-interval">
+        <option value="0">Не напоминать</option>
+        <option value="60">1 час</option>
+        <option value="120">2 часа</option>
+      </select>
+      <button onclick="setupReminders()">Сохранить</button>
     </section>
 
-    <!-- Расширенная библиотека упражнений -->
-    <section class="fade-in" id="exercises-section">
+    <!-- Библиотека упражнений -->
+    <section class="fade-in">
       <h2>Библиотека упражнений</h2>
-      <div id="exercises-container">
-        <!-- Упражнения будут загружаться динамически -->
+      <div class="exercise">
+        <h3>Приседания</h3>
+        <iframe src="https://www.youtube.com/embed/aclHkVaku9U" allowfullscreen></iframe>
+        <button onclick="trackExercise('squats')">Отметить выполнение</button>
+        <div>Выполнено: <span id="squats-counter">0</span> раз</div>
+      </div>
+      <div class="exercise">
+        <h3>Отжимания</h3>
+        <iframe src="https://www.youtube.com/embed/IODxDxX7oi4" allowfullscreen></iframe>
+        <button onclick="trackExercise('pushups')">Отметить выполнение</button>
+        <div>Выполнено: <span id="pushups-counter">0</span> раз</div>
       </div>
     </section>
 
-    <!-- Графики прогресса (остаются без изменений) -->
+    <!-- Графики -->
     <section class="fade-in">
-      <!-- ... существующий код графиков ... -->
+      <h2>Ваш прогресс</h2>
+      <div class="chart-container">
+        <canvas id="weight-chart"></canvas>
+      </div>
+      <div class="chart-container">
+        <canvas id="water-chart"></canvas>
+      </div>
     </section>
   </div>
 
-  <!-- Service Worker Registration -->
   <script>
-    // Инициализация Firebase
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      databaseURL: "YOUR_DATABASE_URL",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
-    firebase.initializeApp(firebaseConfig);
+    function calculateCalories() {
+      const age = +document.getElementById('age').value;
+      const weight = +document.getElementById('weight').value;
+      const height = +document.getElementById('height').value;
+      const gender = document.getElementById('gender').value;
+      const activity = +document.getElementById('activity').value;
 
-    // Инициализация LazyLoad
-    var lazyLoadInstance = new LazyLoad({
-      elements_selector: ".lazy"
-    });
+      if (!age || !weight || !height) {
+        alert("Пожалуйста, заполните все поля");
+        return;
+      }
 
-    // Регистрация Service Worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').then(registration => {
-        console.log('ServiceWorker registration successful');
-      }).catch(err => {
-        console.log('ServiceWorker registration failed: ', err);
-      });
-    }
+      let bmr = gender === 'male'
+        ? 10 * weight + 6.25 * height - 5 * age + 5
+        : 10 * weight + 6.25 * height - 5 * age - 161;
 
-    // ========== БАЗА ДАННЫХ УПРАЖНЕНИЙ ==========
-    const exercisesDatabase = {
-      "squats": {
-        name: "Приседания",
-        videoId: "aclHkVaku9U",
-        description: "Базовое упражнение для ног и ягодиц",
-        calories: 5 // ккал на повтор
-      },
-      "pushups": {
-        name: "Отжимания",
-        videoId: "IODxDxX7oi4",
-        description: "Упражнение для груди, плеч и трицепсов",
-        calories: 3
-      },
-      // Можно добавить больше упражнений
-    };
+      const total = Math.round(bmr * activity);
+      const protein = Math.round((total * 0.3) / 4);
+      const fats = Math.round((total * 0.3) / 9);
+      const carbs = Math.round((total * 0.4) / 4);
 
-    // ========== АВТОРИЗАЦИЯ ==========
-    function signInWithGoogle() {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      firebase.auth().signInWithPopup(provider)
-        .then(result => {
-          updateUserInfo(result.user);
-          syncData();
-        }).catch(error => {
-          console.error(error);
-        });
-    }
-
-    function signOut() {
-      firebase.auth().signOut().then(() => {
-        document.getElementById('auth-container').innerHTML = `
-          <button id="google-auth" onclick="signInWithGoogle()">Войти через Google</button>
-        `;
-        document.getElementById('user-info').style.display = 'none';
-      });
-    }
-
-    function updateUserInfo(user) {
-      document.getElementById('user-info').style.display = 'block';
-      document.getElementById('user-name').textContent = user.displayName;
-      document.getElementById('user-photo').src = user.photoURL;
-      document.getElementById('auth-container').innerHTML = `
-        <button id="logout-btn" onclick="signOut()">Выйти</button>
+      document.getElementById('result').innerHTML = `
+        <p><strong>Суточная норма:</strong> ${total} ккал</p>
+        <p><strong>Белки:</strong> ${protein} г | <strong>Жиры:</strong> ${fats} г | <strong>Углеводы:</strong> ${carbs} г</p>
+        <p><em>Для похудения: ${total - 300} ккал | Для набора: ${total + 300} ккал</em></p>
       `;
     }
 
-    // ========== СИНХРОНИЗАЦИЯ ДАННЫХ ==========
-    function syncData() {
-      const user = firebase.auth().currentUser;
-      if (!user) return;
-
-      const userId = user.uid;
-      const dbRef = firebase.database().ref(`users/${userId}`);
-
-      // Загрузка данных с сервера
-      dbRef.once('value').then(snapshot => {
-        const data = snapshot.val();
-        if (data) {
-          // Восстановление данных
-          if (data.waterTotal) {
-            localStorage.setItem('waterTotal', data.waterTotal);
-            updateWaterDisplay();
-          }
-          
-          Object.keys(exercisesDatabase).forEach(exercise => {
-            if (data[`exercise_${exercise}`]) {
-              localStorage.setItem(`exercise_${exercise}`, data[`exercise_${exercise}`]);
-              document.getElementById(`${exercise}-counter`).textContent = data[`exercise_${exercise}`];
-            }
-          });
-        }
-      });
-
-      // Отправка данных на сервер
-      const syncData = {};
-      syncData.waterTotal = parseInt(localStorage.getItem('waterTotal')) || 0;
-      
-      Object.keys(exercisesDatabase).forEach(exercise => {
-        syncData[`exercise_${exercise}`] = parseInt(localStorage.getItem(`exercise_${exercise}`)) || 0;
-      });
-
-      dbRef.set(syncData);
+    function addWater() {
+      const amount = +document.getElementById('water').value || 0;
+      const total = (parseInt(localStorage.getItem('waterTotal')) || 0) + amount;
+      localStorage.setItem('waterTotal', total);
+      updateWaterDisplay();
+      if (window.waterChart) updateWaterChart();
     }
 
-    // ========== ДИНАМИЧЕСКАЯ ЗАГРУЗКА УПРАЖНЕНИЙ ==========
-    function loadExercises() {
-      const container = document.getElementById('exercises-container');
-      container.innerHTML = '';
-
-      Object.keys(exercisesDatabase).forEach(exercise => {
-        const ex = exercisesDatabase[exercise];
-        const html = `
-          <div class="exercise">
-            <h3>${ex.name}</h3>
-            <p>${ex.description}</p>
-            <div class="exercise-placeholder lazy" 
-                 data-src="https://www.youtube.com/embed/${ex.videoId}">
-              Нажмите для загрузки видео
-            </div>
-            <button onclick="trackExercise('${exercise}')">Отметить выполнение</button>
-            <div>Выполнено: <span id="${exercise}-counter">0</span> раз</div>
-          </div>
-        `;
-        container.innerHTML += html;
-      });
-
-      // Инициализация ленивой загрузки для новых элементов
-      lazyLoadInstance.update();
+    function updateWaterDisplay() {
+      const total = parseInt(localStorage.getItem('waterTotal')) || 0;
+      document.getElementById('water-total').textContent = total;
+      document.getElementById('water-progress').value = Math.min(total, 2000);
     }
 
-    // ========== ОБНОВЛЕННЫЕ ФУНКЦИИ ==========
+    function setupReminders() {
+      const interval = +document.getElementById('reminder-interval').value;
+      if (interval > 0 && Notification.permission === 'granted') {
+        setInterval(() => {
+          new Notification('Пора пить воду!', { body: 'Выпейте стакан воды!' });
+        }, interval * 60000);
+        alert(`Напоминания установлены каждые ${interval} минут`);
+      } else if (interval > 0) {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') setupReminders();
+        });
+      }
+    }
+
     function trackExercise(type) {
-      const user = firebase.auth().currentUser;
       const counter = document.getElementById(`${type}-counter`);
       const count = (parseInt(localStorage.getItem(`exercise_${type}`)) || 0) + 1;
-      
       localStorage.setItem(`exercise_${type}`, count);
       counter.textContent = count;
-      
-      // Синхронизация с Firebase
-      if (user) {
-        firebase.database().ref(`users/${user.uid}/exercise_${type}`).set(count);
-      }
-
-      // Анимация
       counter.classList.add('fade-in');
       setTimeout(() => counter.classList.remove('fade-in'), 300);
     }
 
-    function addWater() {
-      const user = firebase.auth().currentUser;
-      const amount = parseInt(document.getElementById('water').value) || 0;
-      const total = (parseInt(localStorage.getItem('waterTotal')) || 0) + amount;
-      
-      localStorage.setItem('waterTotal', total);
-      updateWaterDisplay();
-      
-      // Синхронизация с Firebase
-      if (user) {
-        firebase.database().ref(`users/${user.uid}/waterTotal`).set(total);
-      }
+    let weightChart, waterChart;
 
-      if (window.waterChart) {
-        updateWaterChart();
-      }
-    }
-
-    // ========== ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ ==========
-    document.addEventListener('DOMContentLoaded', function() {
-      // Проверка авторизации
-      firebase.auth().onAuthStateChanged(user => {
-        if (user) {
-          updateUserInfo(user);
-          syncData();
+    function initCharts() {
+      weightChart = new Chart(document.getElementById('weight-chart'), {
+        type: 'line',
+        data: {
+          labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
+          datasets: [{
+            label: 'Вес (кг)',
+            data: [72, 71.5, 71, 70.8, 70.5, 70.3, 70],
+            borderColor: '#007AFF',
+            tension: 0.1
+          }]
         }
       });
 
-      // Загрузка упражнений
-      loadExercises();
+      waterChart = new Chart(document.getElementById('water-chart'), {
+        type: 'bar',
+        data: {
+          labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
+          datasets: [{
+            label: 'Вода (мл)',
+            data: [1500, 1800, 2000, 1700, 1900, 2100, 2000],
+            backgroundColor: '#007AFF80'
+          }]
+        }
+      });
+    }
 
-      // Инициализация данных
+    function updateWaterChart() {
+      const today = new Date().getDay() - 1;
+      waterChart.data.datasets[0].data[today] = parseInt(localStorage.getItem('waterTotal')) || 0;
+      waterChart.update();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
       updateWaterDisplay();
-      Object.keys(exercisesDatabase).forEach(type => {
+      ['squats', 'pushups'].forEach(type => {
         document.getElementById(`${type}-counter`).textContent = 
           parseInt(localStorage.getItem(`exercise_${type}`)) || 0;
       });
-
       initCharts();
+
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js');
+      }
     });
   </script>
 </body>
