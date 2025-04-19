@@ -35,24 +35,17 @@
       border-radius: 5px;
       cursor: pointer;
     }
-    iframe {
-      margin-bottom: 20px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    table, th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-    }
-    th {
-      background-color: #eee;
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+      text-align: center;
     }
   </style>
 </head>
 <body>
+
+  <!-- ЛОГОТИП -->
+  <img src="logo.png" alt="My Fit Logo" style="display: block; margin: 0 auto 20px; width: 200px;">
 
   <h1>Фит-калькулятор</h1>
 
@@ -81,6 +74,7 @@
   </select>
 
   <button onclick="calculateCalories()">Рассчитать калории</button>
+
   <div id="result"></div>
 
   <script>
@@ -100,172 +94,9 @@
       }
 
       const total = Math.round(bmr * activity);
+
       document.getElementById('result').innerHTML = `Ваша суточная норма калорий: ${total} ккал`;
     }
   </script>
-
-  <hr style="margin: 40px 0;">
-  <h1>План питания</h1>
-  <div id="meal-plan"></div>
-
-  <script>
-    const sampleMeals = {
-      'Понедельник': {
-        'Завтрак': { name: 'Овсянка с фруктами', kcal: 350 },
-        'Обед': { name: 'Гречка с курицей', kcal: 550 },
-        'Ужин': { name: 'Салат с тунцом', kcal: 400 }
-      },
-      'Вторник': {
-        'Завтрак': { name: 'Яичница и тост', kcal: 300 },
-        'Обед': { name: 'Плов', kcal: 600 },
-        'Ужин': { name: 'Овощной суп', kcal: 350 }
-      },
-      'Среда': {
-        'Завтрак': { name: 'Творог с мёдом', kcal: 320 },
-        'Обед': { name: 'Макароны с индейкой', kcal: 540 },
-        'Ужин': { name: 'Омлет с овощами', kcal: 370 }
-      },
-      'Четверг': {
-        'Завтрак': { name: 'Смузи с бананом', kcal: 280 },
-        'Обед': { name: 'Картошка с рыбой', kcal: 520 },
-        'Ужин': { name: 'Куриный салат', kcal: 390 }
-      },
-      'Пятница': {
-        'Завтрак': { name: 'Хлопья с молоком', kcal: 310 },
-        'Обед': { name: 'Бурый рис с овощами', kcal: 500 },
-        'Ужин': { name: 'Суп-пюре', kcal: 360 }
-      },
-      'Суббота': {
-        'Завтрак': { name: 'Панкейки', kcal: 340 },
-        'Обед': { name: 'Лазанья', kcal: 620 },
-        'Ужин': { name: 'Томаты с моцареллой', kcal: 380 }
-      },
-      'Воскресенье': {
-        'Завтрак': { name: 'Фрукты и йогурт', kcal: 300 },
-        'Обед': { name: 'Бургер на гриле', kcal: 650 },
-        'Ужин': { name: 'Рис с креветками', kcal: 420 }
-      }
-    };
-
-    function renderMealPlan() {
-      let html = '';
-      for (let day in sampleMeals) {
-        html += `<h3>${day}</h3><ul>`;
-        for (let meal in sampleMeals[day]) {
-          const item = sampleMeals[day][meal];
-          html += `<li><strong>${meal}:</strong> ${item.name} — ${item.kcal} ккал</li>`;
-        }
-        html += '</ul>';
-      }
-      document.getElementById('meal-plan').innerHTML = html;
-    }
-
-    renderMealPlan();
-  </script>
-
-  <hr style="margin: 40px 0;">
-  <h1>Упражнения</h1>
-
-  <select id="category" onchange="loadExercises()">
-    <option value="strength">Сила</option>
-    <option value="cardio">Кардио</option>
-    <option value="flexibility">Гибкость</option>
-  </select>
-
-  <div id="exercise-list" style="margin-top: 20px;"></div>
-
-  <script>
-    const exercises = {
-      strength: [
-        { name: 'Приседания с гантелями', video: 'https://www.youtube.com/embed/aclHkVaku9U' },
-        { name: 'Жим лёжа', video: 'https://www.youtube.com/embed/gRVjAtPip0Y' }
-      ],
-      cardio: [
-        { name: 'Бёрпи', video: 'https://www.youtube.com/embed/dZgVxmf6jkA' },
-        { name: 'Скакалка', video: 'https://www.youtube.com/embed/I8pUurV-ZZ0' }
-      ],
-      flexibility: [
-        { name: 'Растяжка спины', video: 'https://www.youtube.com/embed/2L2lnxIcNmo' },
-        { name: 'Йога для начинающих', video: 'https://www.youtube.com/embed/v7AYKMP6rOE' }
-      ]
-    };
-
-    function loadExercises() {
-      const type = document.getElementById('category').value;
-      const list = exercises[type];
-      let html = '';
-      list.forEach(ex => {
-        html += `
-          <h3>${ex.name}</h3>
-          <iframe width="100%" height="250" src="${ex.video}" frameborder="0" allowfullscreen></iframe>
-        `;
-      });
-      document.getElementById('exercise-list').innerHTML = html;
-    }
-
-    loadExercises();
-  </script>
-
-  <hr style="margin: 40px 0;">
-  <h1>Прогресс и отчёты</h1>
-
-  <label>Дата:</label>
-  <input type="date" id="log-date">
-
-  <label>Вес (кг):</label>
-  <input type="number" id="log-weight">
-
-  <label>Повторений:</label>
-  <input type="number" id="log-reps">
-
-  <label>Время тренировки (мин):</label>
-  <input type="number" id="log-time">
-
-  <button onclick="saveProgress()">Сохранить результат</button>
-
-  <div id="progress-list" style="margin-top: 20px;"></div>
-
-  <script>
-    function saveProgress() {
-      const date = document.getElementById('log-date').value;
-      const weight = document.getElementById('log-weight').value;
-      const reps = document.getElementById('log-reps').value;
-      const time = document.getElementById('log-time').value;
-
-      if (!date || !weight || !reps || !time) {
-        alert('Пожалуйста, заполните все поля!');
-        return;
-      }
-
-      const entry = { date, weight, reps, time };
-      let data = JSON.parse(localStorage.getItem('progressData')) || [];
-      data.push(entry);
-      localStorage.setItem('progressData', JSON.stringify(data));
-      renderProgress();
-    }
-
-    function renderProgress() {
-      let data = JSON.parse(localStorage.getItem('progressData')) || [];
-      if (data.length === 0) {
-        document.getElementById('progress-list').innerHTML = 'Нет данных для отображения.';
-        return;
-      }
-
-      let html = '<table><tr><th>Дата</th><th>Вес</th><th>Повторы</th><th>Время</th></tr>';
-      data.forEach(entry => {
-        html += `<tr>
-          <td>${entry.date}</td>
-          <td>${entry.weight} кг</td>
-          <td>${entry.reps}</td>
-          <td>${entry.time} мин</td>
-        </tr>`;
-      });
-      html += '</table>';
-      document.getElementById('progress-list').innerHTML = html;
-    }
-
-    renderProgress();
-  </script>
-
 </body>
 </html>
