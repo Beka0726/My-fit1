@@ -3,11 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MyFit Pro - Фитнес трекер</title>
+  <title>MyFit Ultimate</title>
+  <!-- PWA -->
+  <meta name="theme-color" content="#007AFF">
+  <link rel="manifest" href="manifest.json">
+  <!-- Графики -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
       --primary: #007AFF;
       --primary-dark: #0062CC;
+      --error: #FF3B30;
+      --success: #34C759;
       --text: #1C1C1E;
       --bg: #F5F5F7;
       --card: #FFFFFF;
@@ -25,32 +32,28 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-tap-highlight-color: transparent;
     }
     body {
-      font-family: Arial, sans-serif;
-      background-color: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, 'San Francisco', sans-serif;
+      background: var(--bg);
       color: var(--text);
-      padding: 20px;
-      max-width: 600px;
-      margin: 0 auto;
+      padding: 15px;
       line-height: 1.6;
     }
-    h1, h2 {
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    h1, h2, h3 {
       color: var(--primary);
-      text-align: center;
-    }
-    h1 {
-      margin-bottom: 20px;
-    }
-    h2 {
-      margin: 15px 0;
-      font-size: 1.3em;
+      margin-bottom: 15px;
     }
     section {
       background: var(--card);
-      padding: 20px;
       border-radius: 12px;
-      margin-bottom: 25px;
+      padding: 20px;
+      margin-bottom: 20px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
     label {
@@ -62,31 +65,23 @@
       width: 100%;
       padding: 12px;
       margin-bottom: 10px;
-      border-radius: 8px;
       border: 1px solid var(--border);
+      border-radius: 8px;
       background: var(--card);
       color: var(--text);
       font-size: 16px;
-    }
-    input:focus, select:focus {
-      border-color: var(--primary);
-      outline: none;
-      box-shadow: 0 0 0 2px rgba(0,122,255,0.1);
     }
     button {
       width: 100%;
       padding: 14px;
       background: var(--primary);
       color: white;
-      font-size: 16px;
       border: none;
       border-radius: 8px;
+      font-size: 16px;
       cursor: pointer;
       transition: all 0.2s;
       margin-top: 10px;
-    }
-    button:hover {
-      background: var(--primary-dark);
     }
     button:active {
       transform: scale(0.98);
@@ -96,18 +91,6 @@
       padding-bottom: 20px;
       border-bottom: 1px solid var(--border);
     }
-    .exercise:last-child, .meal:last-child {
-      border-bottom: none;
-      margin-bottom: 0;
-      padding-bottom: 0;
-    }
-    iframe {
-      width: 100%;
-      height: 200px;
-      border: none;
-      border-radius: 8px;
-      margin: 10px 0;
-    }
     #result {
       margin-top: 20px;
       padding: 15px;
@@ -115,147 +98,117 @@
       border-radius: 8px;
       border-left: 4px solid var(--primary);
     }
+    .chart-container {
+      margin: 20px 0;
+      height: 250px;
+    }
     progress {
       width: 100%;
       height: 10px;
       border-radius: 5px;
       margin: 10px 0;
     }
-    progress::-webkit-progress-bar {
-      background-color: #f0f0f0;
-      border-radius: 5px;
+    /* Анимации */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    progress::-webkit-progress-value {
-      background-color: var(--primary);
-      border-radius: 5px;
-    }
-    .counter {
-      font-weight: bold;
-      color: var(--primary);
-    }
-    .meal-item {
-      display: flex;
-      align-items: center;
-      margin: 8px 0;
-    }
-    .meal-item input {
-      width: auto;
-      margin-right: 10px;
+    .fade-in {
+      animation: fadeIn 0.3s ease-out;
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <h1>MyFit Ultimate</h1>
 
-  <h1>MyFit Pro</h1>
+    <!-- Калькулятор калорий (оригинальный код) -->
+    <section class="fade-in">
+      <h2>Калькулятор калорий</h2>
+      <label>Возраст:</label>
+      <input type="number" id="age" placeholder="25">
 
-  <!-- Калькулятор калорий -->
-  <section>
-    <h2>Калькулятор калорий</h2>
-    <label>Возраст (лет):</label>
-    <input type="number" id="age" min="10" max="120">
+      <label>Вес (кг):</label>
+      <input type="number" id="weight" placeholder="70">
 
-    <label>Вес (кг):</label>
-    <input type="number" id="weight" min="30" max="300" step="0.1">
+      <label>Рост (см):</label>
+      <input type="number" id="height" placeholder="175">
 
-    <label>Рост (см):</label>
-    <input type="number" id="height" min="100" max="250">
+      <label>Пол:</label>
+      <select id="gender">
+        <option value="male">Мужской</option>
+        <option value="female">Женский</option>
+      </select>
 
-    <label>Пол:</label>
-    <select id="gender">
-      <option value="male">Мужской</option>
-      <option value="female">Женский</option>
-    </select>
+      <label>Активность:</label>
+      <select id="activity">
+        <option value="1.2">Минимальная</option>
+        <option value="1.375">Легкая</option>
+        <option value="1.55" selected>Средняя</option>
+        <option value="1.725">Высокая</option>
+      </select>
 
-    <label>Уровень активности:</label>
-    <select id="activity">
-      <option value="1.2">Сидячий образ жизни</option>
-      <option value="1.375">Легкая активность</option>
-      <option value="1.55" selected>Умеренная активность</option>
-      <option value="1.725">Высокая активность</option>
-      <option value="1.9">Экстремальная активность</option>
-    </select>
+      <button onclick="calculateCalories()">Рассчитать</button>
 
-    <button onclick="calculateCalories()">Рассчитать норму</button>
+      <div id="result"></div>
+    </section>
 
-    <div id="result"></div>
-  </section>
-
-  <!-- Трекер воды -->
-  <section>
-    <h2>Трекер воды</h2>
-    <label>Выпито воды (мл):</label>
-    <input type="number" id="water" min="0" max="5000" value="250">
-    <button onclick="addWater()">Добавить</button>
-    
-    <div style="margin-top: 15px;">
-      <progress id="water-progress" value="0" max="2000"></progress>
-      <div>Всего: <span id="water-total">0</span> мл / 2000 мл</div>
-    </div>
-  </section>
-
-  <!-- Упражнения -->
-  <section>
-    <h2>Тренировки</h2>
-
-    <div class="exercise">
-      <h3>Приседания</h3>
-      <iframe src="https://www.youtube.com/embed/aclHkVaku9U" allowfullscreen></iframe>
-      <button onclick="trackExercise('squats')">Я сделал это!</button>
-      <div>Выполнено: <span id="squats-counter" class="counter">0</span> раз</div>
-    </div>
-
-    <div class="exercise">
-      <h3>Отжимания</h3>
-      <iframe src="https://www.youtube.com/embed/IODxDxX7oi4" allowfullscreen></iframe>
-      <button onclick="trackExercise('pushups')">Я сделал это!</button>
-      <div>Выполнено: <span id="pushups-counter" class="counter">0</span> раз</div>
-    </div>
-
-    <div class="exercise">
-      <h3>Планка</h3>
-      <iframe src="https://www.youtube.com/embed/pSHjTRCQxIw" allowfullscreen></iframe>
-      <button onclick="trackExercise('plank')">Я сделал это!</button>
-      <div>Выполнено: <span id="plank-counter" class="counter">0</span> раз</div>
-    </div>
-  </section>
-
-  <!-- Питание -->
-  <section>
-    <h2>Мой рацион</h2>
-
-    <div class="meal">
-      <h3>Завтрак</h3>
-      <div class="meal-item">
-        <input type="checkbox" id="breakfast1">
-        <label for="breakfast1">Овсянка с бананом и орехами (350 ккал)</label>
+    <!-- Новый трекер воды -->
+    <section class="fade-in">
+      <h2>Трекер воды</h2>
+      <label>Выпито сегодня (мл):</label>
+      <input type="number" id="water" min="0" max="5000" value="250">
+      <button onclick="addWater()">Добавить</button>
+      
+      <div style="margin-top: 15px;">
+        <progress id="water-progress" value="0" max="2000"></progress>
+        <div>Всего: <span id="water-total">0</span> мл / 2000 мл</div>
       </div>
-    </div>
-
-    <div class="meal">
-      <h3>Обед</h3>
-      <div class="meal-item">
-        <input type="checkbox" id="lunch1">
-        <label for="lunch1">Куриная грудка с рисом и овощами (500 ккал)</label>
+      
+      <div class="form-group" style="margin-top:15px">
+        <label>Напоминать каждые:</label>
+        <select id="reminder-interval">
+          <option value="0">Не напоминать</option>
+          <option value="60">1 час</option>
+          <option value="120">2 часа</option>
+        </select>
+        <button onclick="setupReminders()">Сохранить</button>
       </div>
-    </div>
+    </section>
 
-    <div class="meal">
-      <h3>Ужин</h3>
-      <div class="meal-item">
-        <input type="checkbox" id="dinner1">
-        <label for="dinner1">Омлет из 3 яиц с овощами (400 ккал)</label>
+    <!-- Расширенная библиотека упражнений -->
+    <section class="fade-in">
+      <h2>Библиотека упражнений</h2>
+      
+      <div class="exercise">
+        <h3>Приседания</h3>
+        <iframe src="https://www.youtube.com/embed/aclHkVaku9U" allowfullscreen></iframe>
+        <button onclick="trackExercise('squats')">Отметить выполнение</button>
+        <div>Выполнено: <span id="squats-counter">0</span> раз</div>
       </div>
-    </div>
-  </section>
+      
+      <div class="exercise">
+        <h3>Отжимания</h3>
+        <iframe src="https://www.youtube.com/embed/IODxDxX7oi4" allowfullscreen></iframe>
+        <button onclick="trackExercise('pushups')">Отметить выполнение</button>
+        <div>Выполнено: <span id="pushups-counter">0</span> раз</div>
+      </div>
+    </section>
+
+    <!-- Новые графики прогресса -->
+    <section class="fade-in">
+      <h2>Ваш прогресс</h2>
+      <div class="chart-container">
+        <canvas id="weight-chart"></canvas>
+      </div>
+      <div class="chart-container">
+        <canvas id="water-chart"></canvas>
+      </div>
+    </section>
+  </div>
 
   <script>
-    // Загрузка сохраненных данных
-    document.addEventListener('DOMContentLoaded', function() {
-      loadWaterData();
-      loadExerciseData();
-    });
-
-    // Калькулятор калорий
+    // ========== ОРИГИНАЛЬНЫЕ ФУНКЦИИ ==========
     function calculateCalories() {
       const age = parseInt(document.getElementById('age').value);
       const weight = parseFloat(document.getElementById('weight').value);
@@ -263,8 +216,8 @@
       const gender = document.getElementById('gender').value;
       const activity = parseFloat(document.getElementById('activity').value);
 
-      if (!age || !weight || !height || age < 10 || weight < 30 || height < 100) {
-        alert("Пожалуйста, проверьте введенные данные:\n\nВозраст: 10-120 лет\nВес: 30-300 кг\nРост: 100-250 см");
+      if (!age || !weight || !height) {
+        alert("Пожалуйста, заполните все поля");
         return;
       }
 
@@ -281,50 +234,127 @@
       const carbs = Math.round((total * 0.4) / 4);
 
       document.getElementById('result').innerHTML = `
-        <p><strong>Ваша суточная норма:</strong> ${total} ккал</p>
-        <p><strong>Белки:</strong> ${protein} г</p>
-        <p><strong>Жиры:</strong> ${fats} г</p>
-        <p><strong>Углеводы:</strong> ${carbs} г</p>
-        <p><small>Для похудения: ${total - 300} ккал | Для набора: ${total + 300} ккал</small></p>
+        <p><strong>Суточная норма:</strong> ${total} ккал</p>
+        <p><strong>Белки:</strong> ${protein} г | <strong>Жиры:</strong> ${fats} г | <strong>Углеводы:</strong> ${carbs} г</p>
+        <p><em>Для похудения: ${total - 300} ккал | Для набора: ${total + 300} ккал</em></p>
       `;
     }
 
+    // ========== НОВЫЕ ФУНКЦИИ ==========
     // Трекер воды
     function addWater() {
       const amount = parseInt(document.getElementById('water').value) || 0;
-      const current = parseInt(localStorage.getItem('waterTotal') || 0);
-      const newTotal = current + amount;
+      const total = (parseInt(localStorage.getItem('waterTotal')) || 0) + amount;
       
-      localStorage.setItem('waterTotal', newTotal);
-      updateWaterDisplay(newTotal);
+      localStorage.setItem('waterTotal', total);
+      updateWaterDisplay();
+      
+      // Обновляем график
+      if (window.waterChart) {
+        updateWaterChart();
+      }
     }
 
-    function loadWaterData() {
-      const saved = parseInt(localStorage.getItem('waterTotal') || 0);
-      updateWaterDisplay(saved);
-    }
-
-    function updateWaterDisplay(total) {
+    function updateWaterDisplay() {
+      const total = parseInt(localStorage.getItem('waterTotal')) || 0;
       document.getElementById('water-total').textContent = total;
       document.getElementById('water-progress').value = Math.min(total, 2000);
+    }
+
+    // Напоминания
+    function setupReminders() {
+      const interval = parseInt(document.getElementById('reminder-interval').value);
+      
+      if (interval > 0 && Notification.permission === 'granted') {
+        setInterval(() => {
+          new Notification('Пора пить воду!', {
+            body: 'Выпейте стакан воды для поддержания гидратации'
+          });
+        }, interval * 60000);
+        alert(`Напоминания установлены каждые ${interval} минут`);
+      } else if (interval > 0) {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            setupReminders();
+          }
+        });
+      }
     }
 
     // Трекер упражнений
     function trackExercise(type) {
       const counter = document.getElementById(`${type}-counter`);
-      const current = parseInt(localStorage.getItem(`exercise_${type}`) || 0);
-      const newCount = current + 1;
+      const count = (parseInt(localStorage.getItem(`exercise_${type}`)) || 0) + 1;
       
-      localStorage.setItem(`exercise_${type}`, newCount);
-      counter.textContent = newCount;
+      localStorage.setItem(`exercise_${type}`, count);
+      counter.textContent = count;
+      
+      // Можно добавить анимацию
+      counter.classList.add('fade-in');
+      setTimeout(() => counter.classList.remove('fade-in'), 300);
     }
 
-    function loadExerciseData() {
-      ['squats', 'pushups', 'plank'].forEach(type => {
-        const count = parseInt(localStorage.getItem(`exercise_${type}`)) || 0;
-        document.getElementById(`${type}-counter`).textContent = count;
-      });
+    // Графики
+    let weightChart, waterChart;
+
+    function initCharts() {
+      // График веса
+      weightChart = new Chart(
+        document.getElementById('weight-chart'),
+        {
+          type: 'line',
+          data: {
+            labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
+            datasets: [{
+              label: 'Вес (кг)',
+              data: [72, 71.5, 71, 70.8, 70.5, 70.3, 70],
+              borderColor: '#007AFF',
+              tension: 0.1
+            }]
+          }
+        }
+      );
+
+      // График воды
+      waterChart = new Chart(
+        document.getElementById('water-chart'),
+        {
+          type: 'bar',
+          data: {
+            labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
+            datasets: [{
+              label: 'Вода (мл)',
+              data: [1500, 1800, 2000, 1700, 1900, 2100, 2000],
+              backgroundColor: '#007AFF80'
+            }]
+          }
+        }
+      );
     }
+
+    function updateWaterChart() {
+      const today = new Date().getDay() - 1; // 0-6
+      waterChart.data.datasets[0].data[today] = parseInt(localStorage.getItem('waterTotal')) || 0;
+      waterChart.update();
+    }
+
+    // Инициализация при загрузке
+    document.addEventListener('DOMContentLoaded', function() {
+      // Загружаем сохраненные данные
+      updateWaterDisplay();
+      ['squats', 'pushups'].forEach(type => {
+        document.getElementById(`${type}-counter`).textContent = 
+          parseInt(localStorage.getItem(`exercise_${type}`)) || 0;
+      });
+
+      // Инициализируем графики
+      initCharts();
+
+      // Проверяем PWA
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js');
+      }
+    });
   </script>
 </body>
 </html>
