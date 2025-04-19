@@ -1,307 +1,330 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MyFit - Фитнес трекер</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'San Francisco', sans-serif;
-            background-color: #f5f5f7;
-            color: #1c1c1e;
-            line-height: 1.6;
-            -webkit-text-size-adjust: 100%;
-        }
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .auth-form, .calc-container {
-            background: #ffffff;
-            border-radius: 18px;
-            padding: 25px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
-        }
-        h1 {
-            color: #0066cc;
-            text-align: center;
-            font-size: 24px;
-            margin-bottom: 25px;
-            font-weight: 600;
-        }
-        .input-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 16px;
-            font-weight: 500;
-            color: #3a3a3c;
-        }
-        input, select {
-            width: 100%;
-            padding: 15px;
-            font-size: 16px;
-            border: 1px solid #d1d1d6;
-            border-radius: 12px;
-            background-color: #fbfbfd;
-            -webkit-appearance: none;
-        }
-        button {
-            width: 100%;
-            background: linear-gradient(to right, #007aff, #00a2ff);
-            color: white;
-            border: none;
-            padding: 16px;
-            font-size: 17px;
-            font-weight: 500;
-            border-radius: 12px;
-            margin-top: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        button:active {
-            transform: scale(0.98);
-            opacity: 0.9;
-        }
-        #result {
-            margin-top: 25px;
-            padding: 20px;
-            background: #f5f5f7;
-            border-radius: 12px;
-            font-size: 16px;
-            display: none;
-        }
-        .hidden {
-            display: none;
-        }
-        @media (prefers-color-scheme: dark) {
-            body {
-                background: #000;
-                color: #fff;
-            }
-            .auth-form, .calc-container {
-                background: #1c1c1e;
-            }
-            input, select {
-                background: #2c2c2e;
-                border-color: #3a3a3c;
-                color: #fff;
-            }
-            #result {
-                background: #2c2c2e;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyFit Pro - Фитнес трекер</title>
+  <style>
+    :root {
+      --primary: #007AFF;
+      --primary-dark: #0062CC;
+      --text: #1C1C1E;
+      --bg: #F5F5F7;
+      --card: #FFFFFF;
+      --border: #D1D1D6;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --text: #FFFFFF;
+        --bg: #000000;
+        --card: #1C1C1E;
+        --border: #3A3A3C;
+      }
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    h1, h2 {
+      color: var(--primary);
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    h2 {
+      margin: 15px 0;
+      font-size: 1.3em;
+    }
+    section {
+      background: var(--card);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    label {
+      display: block;
+      margin: 12px 0 6px;
+      font-weight: 500;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      font-size: 16px;
+    }
+    input:focus, select:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(0,122,255,0.1);
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      background: var(--primary);
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: var(--primary-dark);
+    }
+    button:active {
+      transform: scale(0.98);
+    }
+    .exercise, .meal {
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .exercise:last-child, .meal:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    iframe {
+      width: 100%;
+      height: 200px;
+      border: none;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      background: var(--bg);
+      border-radius: 8px;
+      border-left: 4px solid var(--primary);
+    }
+    progress {
+      width: 100%;
+      height: 10px;
+      border-radius: 5px;
+      margin: 10px 0;
+    }
+    progress::-webkit-progress-bar {
+      background-color: #f0f0f0;
+      border-radius: 5px;
+    }
+    progress::-webkit-progress-value {
+      background-color: var(--primary);
+      border-radius: 5px;
+    }
+    .counter {
+      font-weight: bold;
+      color: var(--primary);
+    }
+    .meal-item {
+      display: flex;
+      align-items: center;
+      margin: 8px 0;
+    }
+    .meal-item input {
+      width: auto;
+      margin-right: 10px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Форма авторизации -->
-        <div id="authForm" class="auth-form">
-            <h1>Вход в MyFit</h1>
-            
-            <div class="input-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" placeholder="ваш@email.com">
-            </div>
-            
-            <div class="input-group">
-                <label for="password">Пароль</label>
-                <input type="password" id="password" placeholder="••••••••">
-            </div>
-            
-            <button onclick="login()">Войти</button>
-            <button onclick="showRegister()" style="background: transparent; color: #007aff; border: 1px solid #007aff; margin-top: 10px;">
-                Регистрация
-            </button>
-        </div>
-        
-        <!-- Форма регистрации -->
-        <div id="registerForm" class="auth-form hidden">
-            <h1>Регистрация</h1>
-            
-            <div class="input-group">
-                <label for="regName">Имя</label>
-                <input type="text" id="regName" placeholder="Ваше имя">
-            </div>
-            
-            <div class="input-group">
-                <label for="regEmail">Email</label>
-                <input type="email" id="regEmail" placeholder="ваш@email.com">
-            </div>
-            
-            <div class="input-group">
-                <label for="regPassword">Пароль</label>
-                <input type="password" id="regPassword" placeholder="••••••••">
-            </div>
-            
-            <button onclick="register()">Зарегистрироваться</button>
-            <button onclick="showLogin()" style="background: transparent; color: #007aff; border: 1px solid #007aff; margin-top: 10px;">
-                Уже есть аккаунт? Войти
-            </button>
-        </div>
-        
-        <!-- Калькулятор (показывается после входа) -->
-        <div id="calcApp" class="calc-container hidden">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h1>Калькулятор калорий</h1>
-                <button onclick="logout()" style="width: auto; padding: 8px 12px; font-size: 14px;">Выйти</button>
-            </div>
-            
-            <div class="input-group">
-                <label for="age">Возраст (лет)</label>
-                <input type="number" id="age" placeholder="25" min="10" max="120">
-            </div>
-            
-            <div class="input-group">
-                <label for="weight">Вес (кг)</label>
-                <input type="number" id="weight" placeholder="70" min="30" max="300" step="0.1">
-            </div>
-            
-            <div class="input-group">
-                <label for="height">Рост (см)</label>
-                <input type="number" id="height" placeholder="175" min="100" max="250">
-            </div>
-            
-            <div class="input-group">
-                <label for="gender">Пол</label>
-                <select id="gender">
-                    <option value="male">Мужской</option>
-                    <option value="female">Женский</option>
-                </select>
-            </div>
-            
-            <div class="input-group">
-                <label for="activity">Уровень активности</label>
-                <select id="activity">
-                    <option value="1.2">Сидячий образ жизни</option>
-                    <option value="1.375">Легкая активность</option>
-                    <option value="1.55" selected>Умеренная активность</option>
-                    <option value="1.725">Высокая активность</option>
-                </select>
-            </div>
-            
-            <button onclick="calculateCalories()">Рассчитать</button>
-            
-            <div id="result"></div>
-        </div>
+
+  <h1>MyFit Pro</h1>
+
+  <!-- Калькулятор калорий -->
+  <section>
+    <h2>Калькулятор калорий</h2>
+    <label>Возраст (лет):</label>
+    <input type="number" id="age" min="10" max="120">
+
+    <label>Вес (кг):</label>
+    <input type="number" id="weight" min="30" max="300" step="0.1">
+
+    <label>Рост (см):</label>
+    <input type="number" id="height" min="100" max="250">
+
+    <label>Пол:</label>
+    <select id="gender">
+      <option value="male">Мужской</option>
+      <option value="female">Женский</option>
+    </select>
+
+    <label>Уровень активности:</label>
+    <select id="activity">
+      <option value="1.2">Сидячий образ жизни</option>
+      <option value="1.375">Легкая активность</option>
+      <option value="1.55" selected>Умеренная активность</option>
+      <option value="1.725">Высокая активность</option>
+      <option value="1.9">Экстремальная активность</option>
+    </select>
+
+    <button onclick="calculateCalories()">Рассчитать норму</button>
+
+    <div id="result"></div>
+  </section>
+
+  <!-- Трекер воды -->
+  <section>
+    <h2>Трекер воды</h2>
+    <label>Выпито воды (мл):</label>
+    <input type="number" id="water" min="0" max="5000" value="250">
+    <button onclick="addWater()">Добавить</button>
+    
+    <div style="margin-top: 15px;">
+      <progress id="water-progress" value="0" max="2000"></progress>
+      <div>Всего: <span id="water-total">0</span> мл / 2000 мл</div>
+    </div>
+  </section>
+
+  <!-- Упражнения -->
+  <section>
+    <h2>Тренировки</h2>
+
+    <div class="exercise">
+      <h3>Приседания</h3>
+      <iframe src="https://www.youtube.com/embed/aclHkVaku9U" allowfullscreen></iframe>
+      <button onclick="trackExercise('squats')">Я сделал это!</button>
+      <div>Выполнено: <span id="squats-counter" class="counter">0</span> раз</div>
     </div>
 
-    <script>
-        // Текущий пользователь
-        let currentUser = null;
-        
-        // Показать форму входа
-        function showLogin() {
-            document.getElementById('registerForm').classList.add('hidden');
-            document.getElementById('authForm').classList.remove('hidden');
-        }
-        
-        // Показать форму регистрации
-        function showRegister() {
-            document.getElementById('authForm').classList.add('hidden');
-            document.getElementById('registerForm').classList.remove('hidden');
-        }
-        
-        // Вход
-        function login() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            
-            if (!email || !password) {
-                alert("Пожалуйста, заполните все поля");
-                return;
-            }
-            
-            // Простая проверка (в реальном приложении нужно подключить бэкенд)
-            const users = JSON.parse(localStorage.getItem('fitUsers') || '[]');
-            const user = users.find(u => u.email === email && u.password === password);
-            
-            if (user) {
-                currentUser = user;
-                document.getElementById('authForm').classList.add('hidden');
-                document.getElementById('calcApp').classList.remove('hidden');
-            } else {
-                alert("Неверный email или пароль");
-            }
-        }
-        
-        // Регистрация
-        function register() {
-            const name = document.getElementById('regName').value;
-            const email = document.getElementById('regEmail').value;
-            const password = document.getElementById('regPassword').value;
-            
-            if (!name || !email || !password) {
-                alert("Пожалуйста, заполните все поля");
-                return;
-            }
-            
-            const users = JSON.parse(localStorage.getItem('fitUsers') || '[]');
-            
-            if (users.some(u => u.email === email)) {
-                alert("Пользователь с таким email уже существует");
-                return;
-            }
-            
-            const newUser = { name, email, password };
-            users.push(newUser);
-            localStorage.setItem('fitUsers', JSON.stringify(users));
-            
-            alert("Регистрация успешна! Теперь вы можете войти.");
-            showLogin();
-        }
-        
-        // Выход
-        function logout() {
-            currentUser = null;
-            document.getElementById('calcApp').classList.add('hidden');
-            document.getElementById('authForm').classList.remove('hidden');
-            document.getElementById('email').value = '';
-            document.getElementById('password').value = '';
-        }
-        
-        // Расчет калорий
-        function calculateCalories() {
-            const age = parseInt(document.getElementById('age').value);
-            const weight = parseFloat(document.getElementById('weight').value);
-            const height = parseFloat(document.getElementById('height').value);
-            const gender = document.getElementById('gender').value;
-            const activity = parseFloat(document.getElementById('activity').value);
-            
-            if (!age || !weight || !height || age < 10 || weight < 30 || height < 100) {
-                alert("Пожалуйста, введите корректные данные");
-                return;
-            }
-            
-            let bmr;
-            if (gender === 'male') {
-                bmr = 10 * weight + 6.25 * height - 5 * age + 5;
-            } else {
-                bmr = 10 * weight + 6.25 * height - 5 * age - 161;
-            }
-            
-            const total = Math.round(bmr * activity);
-            const loss = Math.max(total - 300, 1200);
-            const gain = total + 300;
-            
-            document.getElementById('result').innerHTML = `
-                <div style="margin-bottom: 10px;"><strong>Базовый метаболизм:</strong> ${Math.round(bmr)} ккал</div>
-                <div style="margin-bottom: 10px;"><strong>Суточная норма:</strong> ${total} ккал</div>
-                <div style="margin-bottom: 10px;"><strong>Для похудения:</strong> ${loss} ккал</div>
-                <div><strong>Для набора массы:</strong> ${gain} ккал</div>
-            `;
-            
-            document.getElementById('result').style.display = 'block';
-        }
-    </script>
+    <div class="exercise">
+      <h3>Отжимания</h3>
+      <iframe src="https://www.youtube.com/embed/IODxDxX7oi4" allowfullscreen></iframe>
+      <button onclick="trackExercise('pushups')">Я сделал это!</button>
+      <div>Выполнено: <span id="pushups-counter" class="counter">0</span> раз</div>
+    </div>
+
+    <div class="exercise">
+      <h3>Планка</h3>
+      <iframe src="https://www.youtube.com/embed/pSHjTRCQxIw" allowfullscreen></iframe>
+      <button onclick="trackExercise('plank')">Я сделал это!</button>
+      <div>Выполнено: <span id="plank-counter" class="counter">0</span> раз</div>
+    </div>
+  </section>
+
+  <!-- Питание -->
+  <section>
+    <h2>Мой рацион</h2>
+
+    <div class="meal">
+      <h3>Завтрак</h3>
+      <div class="meal-item">
+        <input type="checkbox" id="breakfast1">
+        <label for="breakfast1">Овсянка с бананом и орехами (350 ккал)</label>
+      </div>
+    </div>
+
+    <div class="meal">
+      <h3>Обед</h3>
+      <div class="meal-item">
+        <input type="checkbox" id="lunch1">
+        <label for="lunch1">Куриная грудка с рисом и овощами (500 ккал)</label>
+      </div>
+    </div>
+
+    <div class="meal">
+      <h3>Ужин</h3>
+      <div class="meal-item">
+        <input type="checkbox" id="dinner1">
+        <label for="dinner1">Омлет из 3 яиц с овощами (400 ккал)</label>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Загрузка сохраненных данных
+    document.addEventListener('DOMContentLoaded', function() {
+      loadWaterData();
+      loadExerciseData();
+    });
+
+    // Калькулятор калорий
+    function calculateCalories() {
+      const age = parseInt(document.getElementById('age').value);
+      const weight = parseFloat(document.getElementById('weight').value);
+      const height = parseFloat(document.getElementById('height').value);
+      const gender = document.getElementById('gender').value;
+      const activity = parseFloat(document.getElementById('activity').value);
+
+      if (!age || !weight || !height || age < 10 || weight < 30 || height < 100) {
+        alert("Пожалуйста, проверьте введенные данные:\n\nВозраст: 10-120 лет\nВес: 30-300 кг\nРост: 100-250 см");
+        return;
+      }
+
+      let bmr;
+      if (gender === 'male') {
+        bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+      } else {
+        bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+      }
+
+      const total = Math.round(bmr * activity);
+      const protein = Math.round((total * 0.3) / 4);
+      const fats = Math.round((total * 0.3) / 9);
+      const carbs = Math.round((total * 0.4) / 4);
+
+      document.getElementById('result').innerHTML = `
+        <p><strong>Ваша суточная норма:</strong> ${total} ккал</p>
+        <p><strong>Белки:</strong> ${protein} г</p>
+        <p><strong>Жиры:</strong> ${fats} г</p>
+        <p><strong>Углеводы:</strong> ${carbs} г</p>
+        <p><small>Для похудения: ${total - 300} ккал | Для набора: ${total + 300} ккал</small></p>
+      `;
+    }
+
+    // Трекер воды
+    function addWater() {
+      const amount = parseInt(document.getElementById('water').value) || 0;
+      const current = parseInt(localStorage.getItem('waterTotal') || 0);
+      const newTotal = current + amount;
+      
+      localStorage.setItem('waterTotal', newTotal);
+      updateWaterDisplay(newTotal);
+    }
+
+    function loadWaterData() {
+      const saved = parseInt(localStorage.getItem('waterTotal') || 0);
+      updateWaterDisplay(saved);
+    }
+
+    function updateWaterDisplay(total) {
+      document.getElementById('water-total').textContent = total;
+      document.getElementById('water-progress').value = Math.min(total, 2000);
+    }
+
+    // Трекер упражнений
+    function trackExercise(type) {
+      const counter = document.getElementById(`${type}-counter`);
+      const current = parseInt(localStorage.getItem(`exercise_${type}`) || 0);
+      const newCount = current + 1;
+      
+      localStorage.setItem(`exercise_${type}`, newCount);
+      counter.textContent = newCount;
+    }
+
+    function loadExerciseData() {
+      ['squats', 'pushups', 'plank'].forEach(type => {
+        const count = parseInt(localStorage.getItem(`exercise_${type}`)) || 0;
+        document.getElementById(`${type}-counter`).textContent = count;
+      });
+    }
+  </script>
 </body>
 </html>
