@@ -1,19 +1,20 @@
-
-self.addEventListener('install', (event) => {
+self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open('myfit-cache').then((cache) => {
+    caches.open('myfit-cache').then(cache => {
       return cache.addAll([
-        './',
-        './index.html',
-        './favicon.ico'
+        '/',
+        '/index.html',
+        '/style.css',
+        '/script.js',
+        '/manifest.json',
+        '/logo32.png'
       ]);
     })
   );
 });
-
-self.addEventListener('fetch', (event) => {
+self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request).then((response) => {
+    caches.match(event.request).then(response => {
       return response || fetch(event.request);
     })
   );
